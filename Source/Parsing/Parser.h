@@ -24,12 +24,15 @@ private:
 	Statement *newStatement();
 	Statement *newOutStatement();
 	Statement *newInStatement();
+	Statement *newWhileStatement();
+	Statement *newIfStatement();
 
 	VariableProxy *newVariableProxy();
 	Literal *newLiteral();
 
 	ExpressionStatement *newExpressionStatement(Expression *node);
 	Assignment *newAssignment();
+	Expression *newCall();
 
 	std::vector<Declaration *> newDeclarations();
 	Declaration *newVariableDeclaration(VariableProxy *var, const Token &tok);

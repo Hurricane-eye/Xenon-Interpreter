@@ -96,27 +96,44 @@ public:
 };
 
 
-//class WhileStatement final : public BreakableStatement {
-//private:
-//	WhileStatement(int position, NodeType type)
-//		: BreakableStatement(position, type) {}
-//};
-//
-//
+class WhileStatement final : public Statement {
+public:
+	WhileStatement(Expression *condition, Block *body, int position = 0)
+		: Statement(position, WHILE_STATEMENT), while_condition_(condition), while_body_(body) {}
+
+	Expression *whileCondition() const { return while_condition_; }
+	Block *whileBody() const { return while_body_; }
+
+private:
+	Expression *while_condition_;
+	Block *while_body_;
+};
+
+
 //class EmptyStatement final : public Statement {
 //private:
 //	EmptyStatement(int position, NodeType type)
 //		: Statement(position, type) {}
 //};
-//
-//
-//class IfStatement final : public Statement {
-//private:
-//	IfStatement(int position, NodeType type)
-//		: Statement(position, type) {}
-//};
-//
-//
+
+
+class IfStatement : public Statement {
+public:
+	Expression *condition() const { return condition_; }
+	Block *thenStatement() const { return then_statement_; }
+	Block *elseStatement() const { return else_statement_; }
+
+public:
+	IfStatement(Expression *condition, Block *thenStatement, Block *elseStatement, int pos = 0)
+		:Statement(pos, IF_STATEMENT), condition_(condition), then_statement_(thenStatement), else_statement_(elseStatement) {}
+
+private:
+	Expression *condition_;
+	Block *then_statement_;
+	Block *else_statement_ = nullptr;
+};
+
+
 //class JumpStatement : public Statement {
 //protected:
 //	JumpStatement(int position, NodeType type)
@@ -189,14 +206,21 @@ private:
 	Token token_;
 };
 
+
 class FunctionDeclaration final : public Declaration {
 public:
-	FunctionDeclaration(VariableProxy* proxy, const Token & token, int pos = 0)
+	FunctionDeclaration(VariableProxy* proxy, const Token &token, int pos = 0)
 		: Declaration(proxy, pos, FUNCTION_DECLARATION), token_(token) {}
 
 private:
 	Token token_;
 };
+/*
+	proxy:			变量名
+	args:			形参列表
+	token_.type:	返回值类型
+	body_:			函数体
+*/
 
 
 /* Basic Expression. */
@@ -227,11 +251,11 @@ public:
 	VariableProxy* target() const { return target_; }
 	Expression* value() const { return value_; }
 
-	void setTarget(VariableProxy* e) { target_ = e; }
-	void setValue(Expression* e) { value_ = e; }
+	void setTarget(VariableProxy *e) { target_ = e; }
+	void setValue(Expression *e) { value_ = e; }
 
 public:
-	Assignment(Token::Type op, VariableProxy* target, Expression* value, int pos = 0)
+	Assignment(Token::Type op, VariableProxy *target, Expression *value, int pos = 0)
 		: Expression(pos, ASSIGNMENT), op_(op), target_(target), value_(value) {}
 
 private:
@@ -241,23 +265,18 @@ private:
 };
 
 
-//class Call final : public Expression {
-//public:
-//	Expression* expression() const { return expression_; }
-//	ZoneList<Expression*>* arguments() const { return arguments_; }
-//
-//	void setExpression(Expression* e) { expression_ = e; }
-//
-//private:
-//	Call(Expression* expression, ZoneList<Expression*>* arguments, int pos,
-//		PossiblyEval possibly_eval)
-//		: Expression(pos, CALL),
-//		expression_(expression),
-//		arguments_(arguments) {}
-//
-//	Expression* expression_;
-//	ZoneList<Expression*>* arguments_;
-//};
+class Call final : public Expression {
+public:
+	const std::vector<Expression *> &arguments() const { return arguments_; }
+
+public:
+	Call(VariableProxy *proxy, const std::vector<Expression *> &arguments, int pos = 0)
+		: Expression(pos, CALL), proxy_(proxy), arguments_(arguments) {}
+
+public:
+	VariableProxy *proxy_;
+	std::vector<Expression *> arguments_;
+};
 
 
 class BinaryOperation final : public Expression {
@@ -269,7 +288,7 @@ public:
 	void setRight(Expression* e) { right_ = e; }
 
 public:
-	BinaryOperation(Token::Type op, Expression* left, Expression* right, int pos = 0)
+	BinaryOperation(Token::Type op, Expression *left, Expression *right, int pos = 0)
 		: Expression(pos, BINARY_OPERATION), op_(op), left_(left), right_(right) {}
 
 private:

@@ -30,6 +30,8 @@ private:
 	void visitStatement(AstNode *node);
 	void visitInStatement(InStatement *node);
 	void visitOutStatement(OutStatement *node);
+	void visitWhileStatement(WhileStatement *node);
+	void visitIfStatement(IfStatement *node);
 
 	AstValue visitExpressionStatement(ExpressionStatement *node);
 	AstValue &visitAssignment(Assignment *node);
