@@ -209,11 +209,13 @@ private:
 
 class FunctionDeclaration final : public Declaration {
 public:
-	FunctionDeclaration(VariableProxy* proxy, const Token &token, int pos = 0)
-		: Declaration(proxy, pos, FUNCTION_DECLARATION), token_(token) {}
+	FunctionDeclaration(VariableProxy* proxy, const Token &token, std::vector<Declaration *> arguments, Block *function, int pos = 0)
+		: Declaration(proxy, pos, FUNCTION_DECLARATION), token_(token), arguments_(arguments), function_(function) {}
 
 private:
 	Token token_;
+	std::vector<Declaration *> arguments_;
+	Block *function_;
 };
 /*
 	proxy:			±äÁ¿Ãû
